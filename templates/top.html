@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist Maker</title>
+</head>
+<body>
+  <h1>Playlist Maker</h1>
+  <form method="post" action="{{ url_for('playlist') }}">
+    <div>アーティスト名</div>
+    <div>
+      <input type="text" name="artist1">
+      <select>
+        <option>入力後候補が出る</option>
+        <option>アーティスト名</option>
+      </select>
+    </div>
+    <div>
+      <input type="text" name="artist2">
+      <select></select>
+    </div>
+    <div><button type="button">アーティスト追加</button></div>
+    <div><button type="submit">作成</button></div>
+  </form>
+</body>
+</html>
