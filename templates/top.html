@@ -7,17 +7,18 @@
 <body>
   <h1>Playlist Maker</h1>
   <form method="post" action="{{ url_for('playlist') }}">
-    <div>アーティスト名</div>
+    <div>{{ form.artist_name.label }}</div>
     <div>
-      <input type="text" name="artist1">
-      <select>
-        <option>入力後候補が出る</option>
-        <option>アーティスト名</option>
+      {{ form.artist_name }}
+      <select name="artist_id">
+        <option value="1EowJ1WwkMzkCkRomFhui7">RADWIMPS</option>
       </select>
     </div>
     <div>
-      <input type="text" name="artist2">
-      <select></select>
+      {{ form.artist_name }}
+      <select name="artist_id">
+        <option value="69GGBxA162lTqCwzJG5jLp">The Chainsmokers</option>
+      </select>
     </div>
     <div><button type="button">アーティスト追加</button></div>
     <div><button type="submit">作成</button></div>
