@@ -1,7 +1,6 @@
 import time
-import json
 
-from flask import Flask, request, render_template, redirect, session, url_for, g
+from flask import Flask, request, render_template, redirect, session, url_for, g, jsonify
 from flask_session import Session
 
 from flask_wtf import FlaskForm
@@ -23,8 +22,7 @@ sp_oauth = oauth2.SpotifyOAuth(client_id=app.config.get('SPOTIPY_CLIENT_ID'),
 
 
 class ArtistForm(FlaskForm):
-    artist_name = StringField('アーティスト名')
-    artist_id = SelectField()
+    artist_id = HiddenField()
 
 
 class PlaylistForm(FlaskForm):
@@ -93,8 +91,11 @@ def save():
 @app.route('/api/artists', methods=['GET'])
 def api_artists():
     sp = spotipy.Spotify(auth=g.access_token)
-    artists = sp.search(q=request.args.get('q'), type='artist')
-    return json.dumps(artists)
+    artists_ = sp.search(q=request.args.get('q'), type='artist')
+    artists = []
+    for artist_ in artists_['artists']['items']:
+        artists.append({'id': artist_['id'], 'name': artist_['name']})
+    return jsonify(artists)
 
 
 if __name__ == '__main__':

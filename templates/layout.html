@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist Maker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+</head>
+<body>
+  <h1>Playlist Maker</h1>
+  {% block body %}{% endblock %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.8.3/superagent.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="http://www.enjoyxstudy.com/javascript/suggest/suggest.js"></script>
+  <script src="{{ url_for('static', filename='common.js') }}"></script>
+</body>
+</html>

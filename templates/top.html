@@ -1,27 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Playlist Maker</title>
-</head>
-<body>
-  <h1>Playlist Maker</h1>
-  <form method="post" action="{{ url_for('playlist') }}">
-    <div>{{ form.artist_name.label }}</div>
-    <div>
-      {{ form.artist_name }}
-      <select name="artist_id">
-        <option value="1EowJ1WwkMzkCkRomFhui7">RADWIMPS</option>
-      </select>
+{% extends "layout.html" %}
+{% block body %}
+<form method="post" action="{{ url_for('playlist') }}" onsubmit="return false;">
+  <div>アーティスト</div>
+
+  <div id="artists">
+    <div v-for="(artist, index) in artists">
+      [[ artist.name ]]
+      <input type="hidden" name="artist_id" v-bind:value="artist.id">
+      <button type="button" v-on:click="remove(index)">×</button>
     </div>
     <div>
-      {{ form.artist_name }}
-      <select name="artist_id">
-        <option value="69GGBxA162lTqCwzJG5jLp">The Chainsmokers</option>
-      </select>
+      <input type="text" id="new_artist_name" value="" autocomplete="off">
+      <div id="suggest" style="display:none;"></div>
+      <button type="button" v-on:click="append">＋</button>
     </div>
-    <div><button type="button">アーティスト追加</button></div>
-    <div><button type="submit">作成</button></div>
-  </form>
-</body>
-</html>
+  </div>
+
+  <div><button type="button" onclick="submit();">作成</button></div>
+</form>
+{% endblock %}

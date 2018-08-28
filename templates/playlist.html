@@ -1,34 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Playlist Maker</title>
-</head>
-<body>
-  <h1>Playlist Maker</h1>
-  <div>ドラッグ・アンド・ドロップで順序変更</div>
-  <form method="post" action="{{ url_for('save') }}">
-    <table>
-      <thead>
-        <tr>
-          <th>Track</th>
-          <th>Title</th>
-          <th>Artist</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for track in tracks %}
-        <tr>
-          <th>{{ loop.index }}</th>
-          <th>{{ track['name'] }}</th>
-          <th>{{ track['artists'][0]['name'] }}</th>
-          <input type="hidden" name="track_id" value="{{ track['id'] }}">
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-    <div>{{ form.playlist_name.label }}: {{ form.playlist_name }}</div>
-    <div><button type="submit">保存</button></div>
-  </form>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block body %}
+<div>ドラッグ・アンド・ドロップで順序変更</div>
+<form method="post" action="{{ url_for('save') }}">
+  <table>
+    <thead>
+      <tr>
+        <th>Track</th>
+        <th>Title</th>
+        <th>Artist</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for track in tracks %}
+      <tr>
+        <th>{{ loop.index }}</th>
+        <th>{{ track['name'] }}</th>
+        <th>{{ track['artists'][0]['name'] }}</th>
+        <input type="hidden" name="track_id" value="{{ track['id'] }}">
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div>{{ form.playlist_name.label }}: {{ form.playlist_name }}</div>
+  <div><button type="submit">保存</button></div>
+</form>
+{% endblock %}
