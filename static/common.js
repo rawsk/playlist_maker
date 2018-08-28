@@ -36,9 +36,9 @@ function artistSearch(text) {
             for (var artist of res.body) {
                 artist_names.push(artist.name)
             }
-            self.candidateList = artist_names;
-            var resultList = self._search(text);
-            if (resultList.length != 0) self.createSuggestArea(resultList);
+            // self.candidateList = artist_names;
+            // var resultList = self._search(text);
+            if (artist_names.length != 0) self.createSuggestArea(artist_names);
         });
 }
 
