@@ -2,10 +2,9 @@
 {% block body %}
 <div>ドラッグ・アンド・ドロップで順序変更</div>
 <form method="post" action="{{ url_for('save') }}">
-  <table>
+  <table class="playlist">
     <thead>
       <tr>
-        <th>Track</th>
         <th>Title</th>
         <th>Artist</th>
       </tr>
@@ -13,7 +12,6 @@
     <tbody>
     {% for track in tracks %}
       <tr>
-        <th>{{ loop.index }}</th>
         <th>{{ track['name'] }}</th>
         <th>{{ track['artists'][0]['name'] }}</th>
         <input type="hidden" name="track_id" value="{{ track['id'] }}">
@@ -21,7 +19,18 @@
     {% endfor %}
     </tbody>
   </table>
-  <div>{{ form.playlist_name.label }}: {{ form.playlist_name }}</div>
+  <div>
+    <label for="playlist_name">{{ form.playlist_name.label }}:</label>
+    <input type="text" id="playlist_name" name="playlist_name" required>
+  </div>
   <div><button type="submit">保存</button></div>
 </form>
+{% endblock %}
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.7/lib/sortable.js"></script>
+<script>
+  const sortable = new Sortable.default(document.querySelector('tbody'), {
+      draggable: 'tr'
+  });
+</script>
 {% endblock %}

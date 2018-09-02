@@ -14,12 +14,20 @@
     overflow: hidden;
     white-space: nowrap;
 }
-#suggest div.select{ /* キー上下で選択した場合のスタイル */
+#suggest div.select { /* キー上下で選択した場合のスタイル */
     color: #FFFFFF;
     background-color: #3366FF;
 }
 
-#suggest div.over{ /* マウスオーバ時のスタイル */
+#suggest div.over { /* マウスオーバ時のスタイル */
     background-color: #99CCFF;
 }
 /* ここまで */
+
+table.playlist {
+    border-collapse: collapse;
+}
+
+table.playlist tr {
+    border: 1px solid #696969;
+}

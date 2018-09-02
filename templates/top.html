@@ -6,16 +6,22 @@
   <div id="artists">
     <div v-for="(artist, index) in artists">
       [[ artist.name ]]
-      <input type="hidden" name="artist_id" v-bind:value="artist.id">
-      <button type="button" v-on:click="remove(index)">×</button>
+      <input type="number" name="track_count" value="3" min="1" max="10">曲
+      <input type="hidden" name="artist_id" v-model="artist.id">
+      <button type="button" v-on:click="artistRemove(index)">×</button>
     </div>
     <div>
-      <input type="text" id="new_artist_name" value="" autocomplete="off">
+      <input type="text" id="new_artist_name" value="" autocomplete="off" v-on:change="removeNewArtistId">
+      <input type="hidden" id="new_artist_id" v-model="new_artist_id">
       <div id="suggest" style="display:none;"></div>
-      <button type="button" v-on:click="append">＋</button>
+      <button type="button" v-on:click="artistAppend">＋</button>
     </div>
   </div>
 
   <div><button type="button" onclick="submit();">作成</button></div>
 </form>
+{% endblock %}
+{% block script %}
+<script src="http://www.enjoyxstudy.com/javascript/suggest/suggest.js"></script>
+<script src="{{ url_for('static', filename='top.js') }}"></script>
 {% endblock %}

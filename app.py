@@ -4,12 +4,11 @@ from flask import Flask, request, render_template, redirect, session, url_for, g
 from flask_session import Session
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, HiddenField
-from wtforms.validators import DataRequired
+from wtforms import StringField, IntegerField, HiddenField
+from wtforms.validators import DataRequired, NumberRange
 
 import spotipy
 from spotipy import oauth2
-from spotipy import util
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -23,6 +22,7 @@ sp_oauth = oauth2.SpotifyOAuth(client_id=app.config.get('SPOTIPY_CLIENT_ID'),
 
 class ArtistForm(FlaskForm):
     artist_id = HiddenField()
+    track_count = IntegerField(NumberRange(min=1, max=10))
 
 
 class PlaylistForm(FlaskForm):
@@ -72,10 +72,10 @@ def playlist():
     artist_form = ArtistForm()
     sp = spotipy.Spotify(auth=g.access_token)
     tracks = []
-    for artist_id in artist_form.artist_id.raw_data:
+    for artist_id, track_count in zip(artist_form.artist_id.raw_data, artist_form.track_count.raw_data):
         top_tracks = sp.artist_top_tracks(artist_id=artist_id, country='JP')
-        tracks.extend(top_tracks['tracks'][0:3])
-    return render_template('playlist.html', tracks=tracks, form=PlaylistForm(playlist_name='test'))
+        tracks.extend(top_tracks['tracks'][0:int(track_count)])
+    return render_template('playlist.html', tracks=tracks, form=PlaylistForm())
 
 
 @app.route('/save', methods=['POST'])
@@ -91,7 +91,8 @@ def save():
 @app.route('/api/artists', methods=['GET'])
 def api_artists():
     sp = spotipy.Spotify(auth=g.access_token)
-    artists_ = sp.search(q=request.args.get('q'), type='artist')
+    limit = request.args['limit'] if request.args.get('limit') else 10
+    artists_ = sp.search(q=request.args.get('q'), limit=limit, type='artist')
     artists = []
     for artist_ in artists_['artists']['items']:
         artists.append({'id': artist_['id'], 'name': artist_['name']})
