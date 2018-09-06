@@ -3,6 +3,7 @@
 <div>ドラッグ・アンド・ドロップで順序変更</div>
 <div id="playlist">
   <form method="post" action="{{ url_for('save') }}" id="save">
+    {{ form.csrf_token }}
     <table class="playlist">
       <thead>
         <tr>

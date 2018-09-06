@@ -1,6 +1,6 @@
 import time
 
-from flask import Flask, request, render_template, redirect, session, url_for, g, jsonify
+from flask import Flask, request, render_template, redirect, session, url_for, g, jsonify, abort
 from flask_session import Session
 
 from flask_wtf import FlaskForm
@@ -20,14 +20,21 @@ sp_oauth = oauth2.SpotifyOAuth(client_id=app.config.get('SPOTIPY_CLIENT_ID'),
                                scope='playlist-modify-public')
 
 
+def is_valid_raw_data(message: str='request is not valid'):
+    def _is_valid_raw_data(form, field):
+        if field.raw_data is None or not all(field.raw_data):
+            raise ValueError(message)
+    return _is_valid_raw_data
+
+
 class ArtistForm(FlaskForm):
-    artist_id = HiddenField()
-    track_count = IntegerField(NumberRange(min=1, max=10))
+    artist_id = HiddenField(validators=[is_valid_raw_data()])
+    track_count = IntegerField(NumberRange(min=1, max=10), validators=[is_valid_raw_data()])
 
 
 class PlaylistForm(FlaskForm):
-    track_id = HiddenField()
-    playlist_name = StringField('プレイリスト名')
+    track_id = HiddenField(validators=[is_valid_raw_data()])
+    playlist_name = StringField('プレイリスト名', validators=[DataRequired()])
 
 
 @app.before_request
@@ -69,22 +76,33 @@ def login():
 
 @app.route('/playlist', methods=['POST'])
 def playlist():
-    artist_form = ArtistForm()
-    sp = spotipy.Spotify(auth=g.access_token)
     tracks = []
-    for artist_id, track_count in zip(artist_form.artist_id.raw_data, artist_form.track_count.raw_data):
-        top_tracks = sp.artist_top_tracks(artist_id=artist_id, country='JP')
-        tracks.extend(top_tracks['tracks'][0:int(track_count)])
+    artist_form = ArtistForm()
+    if not artist_form.validate_on_submit():
+        abort(400)
+    try:
+        sp = spotipy.Spotify(auth=g.access_token)
+        for artist_id, track_count in zip(artist_form.artist_id.raw_data, artist_form.track_count.raw_data):
+            top_tracks = sp.artist_top_tracks(artist_id=artist_id, country='JP')
+            tracks.extend(top_tracks['tracks'][0:int(track_count)])
+    except spotipy.client.SpotifyException:
+        abort(400)
     return render_template('playlist.html', tracks=tracks, form=PlaylistForm())
 
 
 @app.route('/save', methods=['POST'])
 def save():
+    playlist_ = {}
     playlist_form = PlaylistForm()
-    sp = spotipy.Spotify(auth=g.access_token)
-    user = sp.me()
-    playlist_ = sp.user_playlist_create(user=user['id'], name=playlist_form.playlist_name.data)
-    sp.user_playlist_add_tracks(user=user['id'], playlist_id=playlist_['id'], tracks=playlist_form.track_id.raw_data)
+    if not playlist_form.validate_on_submit():
+        abort(400)
+    try:
+        sp = spotipy.Spotify(auth=g.access_token)
+        user = sp.me()
+        playlist_ = sp.user_playlist_create(user=user['id'], name=playlist_form.playlist_name.data)
+        sp.user_playlist_add_tracks(user=user['id'], playlist_id=playlist_['id'], tracks=playlist_form.track_id.raw_data)
+    except spotipy.client.SpotifyException:
+        abort(400)
     return render_template('save.html', playlist=playlist_)
 
 

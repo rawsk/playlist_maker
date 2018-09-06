@@ -2,6 +2,7 @@
 {% block body %}
 <div id="artists">
   <form method="post" action="{{ url_for('playlist') }}" id="playlist" onsubmit="return false;">
+    {{ form.csrf_token }}
     <div>アーティストを追加</div>
 
     <div v-for="(artist, index) in artists">
