@@ -1,25 +1,29 @@
 {% extends "layout.html" %}
 {% block body %}
-<form method="post" action="{{ url_for('playlist') }}" onsubmit="return false;">
-  <div>アーティスト</div>
+<div id="artists">
+  <form method="post" action="{{ url_for('playlist') }}" id="playlist" onsubmit="return false;">
+    <div>アーティストを追加</div>
 
-  <div id="artists">
     <div v-for="(artist, index) in artists">
       [[ artist.name ]]
-      <input type="number" name="track_count" value="3" min="1" max="10">曲
+      <input type="number" name="track_count" value="3" min="1" max="10" v-validate="'required|min_value:1|max_value:10'" data-vv-as="曲数" v-bind:data-vv-name="'track_count' + index">曲
       <input type="hidden" name="artist_id" v-model="artist.id">
       <button type="button" v-on:click="artistRemove(index)">×</button>
+      <span v-show="errors.has('track_count' + index)" class="error">[[ errors.first('track_count' + index) ]]</span>
     </div>
     <div>
-      <input type="text" id="new_artist_name" value="" autocomplete="off" v-on:change="removeNewArtistId">
-      <input type="hidden" id="new_artist_id" v-model="new_artist_id">
+      <input type="text" id="new_artist_name" value="" autocomplete="off" v-on:keydown="removeNewArtistId">
+      <input type="hidden" id="new_artist_id" v-model="newArtistId">
       <div id="suggest" style="display:none;"></div>
-      <button type="button" v-on:click="artistAppend">＋</button>
+      <button type="button" v-on:click="artistAppend" v-bind:disabled="!newArtistId">＋</button>
     </div>
-  </div>
+    <div>入力候補から選択してください</div>
 
-  <div><button type="button" onclick="submit();">作成</button></div>
-</form>
+    <div>
+      <button type="button" v-on:click="submit" v-bind:disabled="artists.length === 0">作成</button>
+    </div>
+  </form>
+</div>
 {% endblock %}
 {% block script %}
 <script src="http://www.enjoyxstudy.com/javascript/suggest/suggest.js"></script>

@@ -91,7 +91,7 @@ def save():
 @app.route('/api/artists', methods=['GET'])
 def api_artists():
     sp = spotipy.Spotify(auth=g.access_token)
-    limit = request.args['limit'] if request.args.get('limit') else 10
+    limit = request.args['limit'] if request.args.get('limit') else 20
     artists_ = sp.search(q=request.args.get('q'), limit=limit, type='artist')
     artists = []
     for artist_ in artists_['artists']['items']:

@@ -28,6 +28,11 @@ table.playlist {
     border-collapse: collapse;
 }
 
-table.playlist tr {
+table.playlist th {
+    width: 500px;
     border: 1px solid #696969;
+}
+
+.error {
+    color: #fa0800;
 }

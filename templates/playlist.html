@@ -1,36 +1,35 @@
 {% extends "layout.html" %}
 {% block body %}
 <div>ドラッグ・アンド・ドロップで順序変更</div>
-<form method="post" action="{{ url_for('save') }}">
-  <table class="playlist">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Artist</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for track in tracks %}
-      <tr>
-        <th>{{ track['name'] }}</th>
-        <th>{{ track['artists'][0]['name'] }}</th>
-        <input type="hidden" name="track_id" value="{{ track['id'] }}">
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  <div>
-    <label for="playlist_name">{{ form.playlist_name.label }}:</label>
-    <input type="text" id="playlist_name" name="playlist_name" required>
-  </div>
-  <div><button type="submit">保存</button></div>
-</form>
+<div id="playlist">
+  <form method="post" action="{{ url_for('save') }}" id="save">
+    <table class="playlist">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Artist</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for track in tracks %}
+        <tr class="track">
+          <th>{{ track['name'] }}</th>
+          <th>{{ track['artists'][0]['name'] }}</th>
+          <input type="hidden" name="track_id" value="{{ track['id'] }}">
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div>
+      <label for="playlist_name">{{ form.playlist_name.label }}:</label>
+      <input type="text" id="playlist_name" name="playlist_name" v-model="playlistName" v-validate="'required'" data-vv-as="プレイリスト名" required>
+      <span v-show="errors.has('playlist_name')" class="error">[[ errors.first('playlist_name') ]]</span>
+    </div>
+    <div><button type="button" v-on:click="submit" v-bind:disabled="!playlistName">保存</button></div>
+  </form>
+</div>
 {% endblock %}
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.7/lib/sortable.js"></script>
-<script>
-  const sortable = new Sortable.default(document.querySelector('tbody'), {
-      draggable: 'tr'
-  });
-</script>
+<script src="{{ url_for('static', filename='playlist.js') }}"></script>
 {% endblock %}
