@@ -110,7 +110,7 @@ def save():
 def api_artists():
     sp = spotipy.Spotify(auth=g.access_token)
     limit = request.args['limit'] if request.args.get('limit') else 20
-    artists_ = sp.search(q=request.args.get('q'), limit=limit, type='artist')
+    artists_ = sp.search(q=request.args.get('q'), limit=limit, type='artist', market='JP')
     artists = []
     for artist_ in artists_['artists']['items']:
         artists.append({'id': artist_['id'], 'name': artist_['name']})
